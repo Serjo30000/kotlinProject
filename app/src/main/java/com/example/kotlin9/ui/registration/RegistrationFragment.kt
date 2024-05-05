@@ -119,6 +119,7 @@ class RegistrationFragment : Fragment(){
         startActivityForResult(galleryIntent, REQUEST_CODE_GALLERY)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -134,6 +135,7 @@ class RegistrationFragment : Fragment(){
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
@@ -153,7 +155,7 @@ class RegistrationFragment : Fragment(){
     private fun registerUser(name: String, surname: String, login: String, password: String, birthday: String) {
 
         val avatar: String = if (selectedImage != null) {
-            UUID.randomUUID().toString() + ".jpg"
+            UUID.randomUUID().toString()
         } else {
             ""
         }
@@ -172,10 +174,8 @@ class RegistrationFragment : Fragment(){
 
         val userService = retrofit.create(UserService::class.java)
 
-        val user = UserLibraryDto(name, surname, login, password, sqlDate, avatar.toString())
-        if (selectedImage != null) {
-            uploadImageToFirebaseStorage(selectedImage!!,avatar)
-        }
+        val user = UserLibraryDto(name, surname, login, password, sqlDate, avatar.toString() + ".jpg")
+
         val call = userService.saveUserLibraries(user)
 
         call.enqueue(object : Callback<Int> {
@@ -183,7 +183,6 @@ class RegistrationFragment : Fragment(){
                 if (response.isSuccessful) {
                     val statusCode: Int? = response.body()
                     if (statusCode == 0){
-
                         showAlert("Такой пользователь уже есть", "Пожалуйста придумайте другой логин")
                     }
                     else{
@@ -197,6 +196,10 @@ class RegistrationFragment : Fragment(){
                 showAlert("Ошибка сервера", "Пожалуйста попробуйте снова")
             }
         })
+
+        if (selectedImage != null) {
+            uploadImageToFirebaseStorage(selectedImage!!,avatar)
+        }
     }
 
     private fun isValidDateFormat(dateString: String): Boolean {
