@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/nav_personal_area">
+
+    <fragment
+        android:id="@+id/nav_personal_area"
+        android:name="com.example.kotlin9.ui.personalarea.PersonalAreaFragment"
+        android:label="@string/menu_personal_area"
+        tools:layout="@layout/fragment_personal_area" />
+
+    <fragment
+        android:id="@+id/nav_weather"
+        android:name="com.example.kotlin9.ui.weather.WeatherFragment"
+        android:label="@string/menu_weather"
+        tools:layout="@layout/fragment_weather" />
+
+    <fragment
+        android:id="@+id/nav_music"
+        android:name="com.example.kotlin9.ui.music.MusicFragment"
+        android:label="@string/menu_music"
+        tools:layout="@layout/fragment_music" />
+    <fragment
+        android:id="@+id/nav_login"
+        android:name="com.example.kotlin9.ui.authorization.LoginFragment"
+        android:label="@string/menu_login" />
+    <fragment
+        android:id="@+id/nav_registration"
+        android:name="com.example.kotlin9.ui.registration.RegistrationFragment"
+        android:label="@string/menu_registration"
+        tools:layout="@layout/fragment_registration" />
+</navigation>
