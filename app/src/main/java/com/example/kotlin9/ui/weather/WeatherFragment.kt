@@ -1,7 +1,9 @@
 package com.example.kotlin9.ui.weather
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
@@ -10,14 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.example.kotlin9.R
-import com.example.kotlin9.api.WeatherForecast
-import com.example.kotlin9.api.WeatherService
-import com.example.kotlin9.api.WeeklyForecastResponse
+import com.example.kotlin9.api.*
 import com.example.kotlin9.databinding.FragmentWeatherBinding
-import com.example.kotlin9.ui.personalarea.PersonalAreaViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,6 +32,7 @@ import kotlin.math.ceil
 import com.squareup.picasso.Picasso
 
 class WeatherFragment : Fragment() {
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var _binding: FragmentWeatherBinding? = null
 
@@ -43,12 +44,100 @@ class WeatherFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWeatherBinding.inflate(inflater, container, false)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+
+            fetchWeeklyForecast(51.51, -0.09)
+
+        } else {
+            getLocation { geoLocationUser ->
+                if (geoLocationUser != null) {
+                    val retrofitGeo = Retrofit.Builder()
+                        .baseUrl("http://api.openweathermap.org/geo/1.0/")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+
+                    val geoService = retrofitGeo.create(WeatherService::class.java)
+
+                    val geoCall = geoService.getCities(geoLocationUser.cityName + "," + geoLocationUser.stateCode + "," + geoLocationUser.countryCode,1,"76920226a5e3ce8c26e38b6419c4ceb2")
+
+                    geoCall.enqueue(object : Callback<List<LocalCity>> {
+                        override fun onResponse(call: Call<List<LocalCity>>, response: Response<List<LocalCity>>) {
+                            if (response.isSuccessful) {
+
+                                val localCityResponse = response.body()
+
+                                if (localCityResponse != null){
+                                    fetchWeeklyForecast(localCityResponse.get(0).lat, localCityResponse.get(0).lon)
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<List<LocalCity>>, t: Throwable) {
+                            showAlert("Ошибка сервера", "Пожалуйста попробуйте снова")
+                        }
+                    })
+                }
+            }
+        }
+    }
+
+    private fun getLocation(callback: (GeoLocationUser?) -> Unit){
+        var geoLocationUser: GeoLocationUser? = GeoLocationUser("London", "England", "GB")
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    geoLocationUser = getLocationInfo(requireContext(), location)
+                    callback(geoLocationUser)
+                } else {
+                    showAlert("Ошибка", "Не удалось получить местоположение")
+                    callback(geoLocationUser)
+                }
+            }
+            .addOnFailureListener { e ->
+                showAlert("Ошибка", "Не удалось получить местоположение: ${e.message}")
+                callback(geoLocationUser)
+            }
+    }
+
+    fun getLocationInfo(context: Context, location: Location): GeoLocationUser? {
+        val geocoder = Geocoder(context, Locale.getDefault())
+        val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+        if (addresses != null){
+            if (addresses.isNotEmpty()) {
+                val address = addresses[0]
+                val cityName = address.locality
+                val stateCode = address.adminArea
+                val countryCode = address.countryCode
+                return GeoLocationUser(cityName, stateCode, countryCode)
+            }
+        }
+        return GeoLocationUser("London", "England", "GB")
+    }
+
+    fun fetchWeeklyForecast(lat : Double, lon : Double){
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org/data/2.5/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -56,9 +145,7 @@ class WeatherFragment : Fragment() {
 
         val apiService = retrofit.create(WeatherService::class.java)
 
-        val city = "Saratov"
-
-        val call = apiService.getWeeklyForecast(51.53,46.03,"76920226a5e3ce8c26e38b6419c4ceb2")
+        val call = apiService.getWeeklyForecast(lat,lon,"76920226a5e3ce8c26e38b6419c4ceb2")
 
         call.enqueue(object : Callback<WeeklyForecastResponse> {
             override fun onResponse(call: Call<WeeklyForecastResponse>, response: Response<WeeklyForecastResponse>) {
@@ -203,20 +290,6 @@ class WeatherFragment : Fragment() {
         })
     }
 
-    fun getLocationInfo(context: Context, location: Location) {
-        val geocoder = Geocoder(context, Locale.getDefault())
-        val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-        if (addresses != null){
-            if (addresses.isNotEmpty()) {
-                val address = addresses[0]
-                val cityName = address.locality
-                val stateCode = address.adminArea // Код региона (штата или провинции)
-                val countryCode = address.countryCode
-
-            }
-        }
-    }
-
     private fun showAlert(title: String, message: String) {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setTitle(title)
@@ -230,5 +303,9 @@ class WeatherFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 123
     }
 }

@@ -4,6 +4,12 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+data class GeoLocationUser(
+    val cityName: String,
+    val stateCode: String,
+    val countryCode: String,
+)
+
 data class WeeklyForecastResponse(
     val cod: String,
     val message: Int,
@@ -78,6 +84,15 @@ data class Coord(
     val lon: Double
 )
 
+data class LocalCity(
+    val name: String,
+    val localNames: Map<String, String>,
+    val lat: Double,
+    val lon: Double,
+    val country: String,
+    val state: String
+)
+
 interface WeatherService {
     @GET("forecast")
     fun getWeeklyForecast(
@@ -85,4 +100,11 @@ interface WeatherService {
         @Query("lon") lon: Double,
         @Query("appid") appid: String
     ): Call<WeeklyForecastResponse>
+
+    @GET("direct")
+    fun getCities(
+        @Query("q") q: String,
+        @Query("limit") limit: Int,
+        @Query("appid") appid: String
+    ): Call<List<LocalCity>>
 }
