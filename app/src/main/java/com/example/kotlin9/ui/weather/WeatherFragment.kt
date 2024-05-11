@@ -30,6 +30,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.ceil
 import com.squareup.picasso.Picasso
+import java.time.LocalDate
 
 class WeatherFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -157,51 +158,76 @@ class WeatherFragment : Fragment() {
                         val localPlaceCityWeather: TextView = binding.localPlaceCityWeather
                         localPlaceCityWeather.text = weatherResponse.city.name
 
+//                        println("hello " + weatherResponse.city.timezone)
+
+                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
                         val lstWeatherForecast = ArrayList<WeatherForecast>()
+                        val lstTemperaturesAverage = ArrayList<Double>()
+                        val lstDays = ArrayList<String>()
+                        var temperatureWeatherResponse = 0.0
+                        var countDay = 0
+                        var countHour = 0
 
                         for (i in weatherResponse.list.indices) {
-                            if (i % 8 == 0){
+                            var formatterDateTime = LocalDateTime.parse(weatherResponse.list.get(i).dt_txt, formatter)
+                            val dateTime = LocalDate.of(formatterDateTime.year, formatterDateTime.month, formatterDateTime.dayOfMonth)
+                            var dateNow = LocalDate.now()
+                            if (dateNow.plusDays(countDay.toLong()).isEqual(dateTime)){
+                                if (lstDays.size==0){
+                                    lstDays.add(weatherResponse.list.get(i).dt_txt)
+                                }
+                                temperatureWeatherResponse += weatherResponse.list.get(i).main.temp
+                                countHour++
+                            }
+                            else{
+                                lstDays.add(weatherResponse.list.get(i).dt_txt)
+                                lstTemperaturesAverage.add(temperatureWeatherResponse / countHour)
+                                temperatureWeatherResponse = weatherResponse.list.get(i).main.temp
+                                countHour = 1
+                                countDay++
+                            }
+
+                            if ((i + 1) % 8 == 0){
                                 lstWeatherForecast.add(weatherResponse.list.get(i))
                             }
                         }
 
                         val temperatureDayTodayWeather: TextView = binding.temperatureDayTodayWeather
-                        temperatureDayTodayWeather.text = ceil(lstWeatherForecast.get(0).main.temp - 273.15).toInt().toString() + "°"
+                        temperatureDayTodayWeather.text = ceil(weatherResponse.list.get(0).main.temp - 273.15).toInt().toString() + "°"
 
                         val temperatureDayFirstWeather: TextView = binding.temperatureDayFirstWeather
-                        temperatureDayFirstWeather.text = ceil(lstWeatherForecast.get(0).main.temp - 273.15).toInt().toString() + "°"
+                        temperatureDayFirstWeather.text = ceil(lstTemperaturesAverage.get(0) - 273.15).toInt().toString() + "°"
 
                         val temperatureDaySecondWeather: TextView = binding.temperatureDaySecondWeather
-                        temperatureDaySecondWeather.text = ceil(lstWeatherForecast.get(1).main.temp - 273.15).toInt().toString() + "°"
+                        temperatureDaySecondWeather.text = ceil(lstTemperaturesAverage.get(1) - 273.15).toInt().toString() + "°"
 
                         val temperatureDayThirdWeather: TextView = binding.temperatureDayThirdWeather
-                        temperatureDayThirdWeather.text = ceil(lstWeatherForecast.get(2).main.temp - 273.15).toInt().toString() + "°"
+                        temperatureDayThirdWeather.text = ceil(lstTemperaturesAverage.get(2) - 273.15).toInt().toString() + "°"
 
                         val temperatureDayFourthWeather: TextView = binding.temperatureDayFourthWeather
-                        temperatureDayFourthWeather.text = ceil(lstWeatherForecast.get(3).main.temp - 273.15).toInt().toString() + "°"
+                        temperatureDayFourthWeather.text = ceil(lstTemperaturesAverage.get(3) - 273.15).toInt().toString() + "°"
 
                         val temperatureDayFifthWeather: TextView = binding.temperatureDayFifthWeather
-                        temperatureDayFifthWeather.text = ceil(lstWeatherForecast.get(4).main.temp - 273.15).toInt().toString() + "°"
-
-                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                        temperatureDayFifthWeather.text = ceil(lstTemperaturesAverage.get(4) - 273.15).toInt().toString() + "°"
 
                         val nameDaySecondWeather: TextView = binding.nameDaySecondWeather
-                        val nameDaySecondWeatherDateTime = LocalDateTime.parse(lstWeatherForecast.get(1).dt_txt, formatter)
+                        val nameDaySecondWeatherDateTime = LocalDateTime.parse(lstDays.get(1), formatter)
                         nameDaySecondWeather.text = nameDaySecondWeatherDateTime.dayOfWeek.getDisplayName(
                             TextStyle.FULL, Locale.getDefault())
 
                         val nameDayThirdWeather: TextView = binding.nameDayThirdWeather
-                        val nameDayThirdWeatherDateTime = LocalDateTime.parse(lstWeatherForecast.get(2).dt_txt, formatter)
+                        val nameDayThirdWeatherDateTime = LocalDateTime.parse(lstDays.get(2), formatter)
                         nameDayThirdWeather.text = nameDayThirdWeatherDateTime.dayOfWeek.getDisplayName(
                             TextStyle.FULL, Locale.getDefault())
 
                         val nameDayFourthWeather: TextView = binding.nameDayFourthWeather
-                        val nameDayFourthWeatherDateTime = LocalDateTime.parse(lstWeatherForecast.get(3).dt_txt, formatter)
+                        val nameDayFourthWeatherDateTime = LocalDateTime.parse(lstDays.get(3), formatter)
                         nameDayFourthWeather.text = nameDayFourthWeatherDateTime.dayOfWeek.getDisplayName(
                             TextStyle.FULL, Locale.getDefault())
 
                         val nameDayFifthWeather: TextView = binding.nameDayFifthWeather
-                        val nameDayFifthWeatherDateTime = LocalDateTime.parse(lstWeatherForecast.get(4).dt_txt, formatter)
+                        val nameDayFifthWeatherDateTime = LocalDateTime.parse(lstDays.get(4), formatter)
                         nameDayFifthWeather.text = nameDayFifthWeatherDateTime.dayOfWeek.getDisplayName(
                             TextStyle.FULL, Locale.getDefault())
 
@@ -280,6 +306,38 @@ class WeatherFragment : Fragment() {
                         val imageDayToday12Weather: ImageView = binding.imageDayToday12Weather
                         val imageDayToday12WeatherURL = "https://openweathermap.org/img/w/" + weatherResponse.list.get(7).weather.get(0).icon + ".png"
                         Picasso.get().load(imageDayToday12WeatherURL).into(imageDayToday12Weather)
+
+                        val nameDayToday15Weather: TextView = binding.nameDayToday15Weather
+                        val nameDayToday15WeatherDateTime = LocalDateTime.parse(weatherResponse.list.get(0).dt_txt, formatter)
+                        nameDayToday15Weather.text = nameDayToday15WeatherDateTime.hour.toString()
+
+                        val nameDayToday18Weather: TextView = binding.nameDayToday18Weather
+                        val nameDayToday18WeatherDateTime = LocalDateTime.parse(weatherResponse.list.get(1).dt_txt, formatter)
+                        nameDayToday18Weather.text = nameDayToday18WeatherDateTime.hour.toString()
+
+                        val nameDayToday21Weather: TextView = binding.nameDayToday21Weather
+                        val nameDayToday21WeatherDateTime = LocalDateTime.parse(weatherResponse.list.get(2).dt_txt, formatter)
+                        nameDayToday21Weather.text = nameDayToday21WeatherDateTime.hour.toString()
+
+                        val nameDayToday00Weather: TextView = binding.nameDayToday00Weather
+                        val nameDayToday00WeatherDateTime = LocalDateTime.parse(weatherResponse.list.get(3).dt_txt, formatter)
+                        nameDayToday00Weather.text = nameDayToday00WeatherDateTime.hour.toString()
+
+                        val nameDayToday03Weather: TextView = binding.nameDayToday03Weather
+                        val nameDayToday03WeatherDateTime = LocalDateTime.parse(weatherResponse.list.get(4).dt_txt, formatter)
+                        nameDayToday03Weather.text = nameDayToday03WeatherDateTime.hour.toString()
+
+                        val nameDayToday06Weather: TextView = binding.nameDayToday06Weather
+                        val nameDayToday06WeatherDateTime = LocalDateTime.parse(weatherResponse.list.get(5).dt_txt, formatter)
+                        nameDayToday06Weather.text = nameDayToday06WeatherDateTime.hour.toString()
+
+                        val nameDayToday09Weather: TextView = binding.nameDayToday09Weather
+                        val nameDayToday09WeatherDateTime = LocalDateTime.parse(weatherResponse.list.get(6).dt_txt, formatter)
+                        nameDayToday09Weather.text = nameDayToday09WeatherDateTime.hour.toString()
+
+                        val nameDayToday12Weather: TextView = binding.nameDayToday12Weather
+                        val nameDayToday12WeatherDateTime = LocalDateTime.parse(weatherResponse.list.get(7).dt_txt, formatter)
+                        nameDayToday12Weather.text = nameDayToday12WeatherDateTime.hour.toString()
                     }
                 }
             }

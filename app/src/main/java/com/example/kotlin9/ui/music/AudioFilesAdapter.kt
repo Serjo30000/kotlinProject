@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlin9.R
@@ -41,12 +40,15 @@ class AudioFilesAdapter : RecyclerView.Adapter<AudioFilesAdapter.AudioFileViewHo
     inner class AudioFileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
         private val authorTextView: TextView = itemView.findViewById(R.id.authorTextView)
-        private val imageView: ImageView = itemView.findViewById(R.id.imageView)
         private val playButton: ImageButton = itemView.findViewById(R.id.playButton)
         private val stopButton: ImageButton = itemView.findViewById(R.id.stopButton)
 
         init {
             mediaPlayer = MediaPlayer()
+
+            mediaPlayer?.setOnCompletionListener {
+                mediaPlayer?.start()
+            }
         }
 
         fun bind(storageReference: StorageReference) {
@@ -58,8 +60,6 @@ class AudioFilesAdapter : RecyclerView.Adapter<AudioFilesAdapter.AudioFileViewHo
 
             titleTextView.text = titleText
             authorTextView.text = " " + authorText
-
-            // Здесь вы можете установить изображение аудиофайла, если имеется
 
             playButton.setOnClickListener {
                 if (mediaPlayer?.isPlaying == true) {
@@ -105,6 +105,7 @@ class AudioFilesAdapter : RecyclerView.Adapter<AudioFilesAdapter.AudioFileViewHo
             currentSongName = ""
             mediaPlayer?.stop()
             mediaPlayer?.prepare()
+            isPlaying = false
         }
     }
 
@@ -113,6 +114,7 @@ class AudioFilesAdapter : RecyclerView.Adapter<AudioFilesAdapter.AudioFileViewHo
             currentSongName = ""
             mediaPlayer?.stop()
             mediaPlayer?.prepare()
+            isPlaying = false
         }
     }
 }

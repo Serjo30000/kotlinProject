@@ -1,5 +1,6 @@
 package com.example.kotlin9.ui.music
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -63,8 +64,18 @@ class MusicFragment : Fragment() {
             }
 
             .addOnFailureListener { exception ->
-
+                showAlert("Ошибка сервера", "Пожалуйста попробуйте снова")
             }
+    }
+
+    private fun showAlert(title: String, message: String) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle(title)
+        alertDialogBuilder.setMessage(message)
+        alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        alertDialogBuilder.create().show()
     }
 
     override fun onDestroyView() {
