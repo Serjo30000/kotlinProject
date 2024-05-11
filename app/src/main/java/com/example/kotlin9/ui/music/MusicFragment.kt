@@ -1,21 +1,15 @@
 package com.example.kotlin9.ui.music
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlin9.databinding.FragmentMusicBinding
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
-import java.io.ByteArrayOutputStream
 
 class MusicFragment : Fragment() {
 
@@ -63,12 +57,11 @@ class MusicFragment : Fragment() {
                 listResult.items.forEach { item ->
                     if (item.name.endsWith(".mp3") || item.name.endsWith(".wav") || item.name.endsWith(".ogg")) {
                         audioFilesList.add(item)
-                        println(item.name)
                     }
                 }
-
                 adapter.setItems(audioFilesList)
             }
+
             .addOnFailureListener { exception ->
 
             }
@@ -77,5 +70,6 @@ class MusicFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        adapter.stopMusic()
     }
 }
