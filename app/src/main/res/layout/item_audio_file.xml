@@ -7,7 +7,7 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/musicImageView"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:src="@drawable/ic_menu_slideshow"
@@ -17,7 +17,7 @@
     <HorizontalScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/imageView"
+        android:layout_toEndOf="@id/musicImageView"
         android:layout_marginStart="16dp"
         android:layout_toStartOf="@id/linearLayout"
         android:layout_centerVertical="true">

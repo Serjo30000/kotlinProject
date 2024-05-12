@@ -12,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.kotlin9.R
 import com.example.kotlin9.api.UserLibraryDto
 import com.example.kotlin9.api.UserService
 import com.example.kotlin9.databinding.FragmentRegistrationBinding
@@ -86,7 +88,16 @@ class RegistrationFragment : Fragment(){
                 return@setOnClickListener
             }
 
-            registerUser(name, surname, login, password, birthday);
+            registerUser(name, surname, login, password, birthday) {avatar->
+                println(avatar)
+                if (selectedImage != null) {
+                    println(1)
+                    uploadImageToFirebaseStorage(selectedImage!!,avatar)
+                }
+                clearFields()
+                showAlert("Вы успешно зарегистрировались", "Теперь вы можете залогиниться")
+            }
+
         }
     }
 
@@ -152,12 +163,12 @@ class RegistrationFragment : Fragment(){
         }
     }
 
-    private fun registerUser(name: String, surname: String, login: String, password: String, birthday: String) {
+    private fun registerUser(name: String, surname: String, login: String, password: String, birthday: String, callback: (String) -> Unit) {
 
         val avatar: String = if (selectedImage != null) {
             UUID.randomUUID().toString()
         } else {
-            ""
+            "default"
         }
 
         val dateFormat = SimpleDateFormat("yyyy/MM/dd")
@@ -186,8 +197,7 @@ class RegistrationFragment : Fragment(){
                         showAlert("Такой пользователь уже есть", "Пожалуйста придумайте другой логин")
                     }
                     else{
-                        clearFields()
-                        showAlert("Вы успешно зарегистрировались", "Теперь вы можете залогиниться")
+                        callback(avatar)
                     }
                 }
             }
@@ -196,10 +206,6 @@ class RegistrationFragment : Fragment(){
                 showAlert("Ошибка сервера", "Пожалуйста попробуйте снова")
             }
         })
-
-        if (selectedImage != null) {
-            uploadImageToFirebaseStorage(selectedImage!!,avatar)
-        }
     }
 
     private fun isValidDateFormat(dateString: String): Boolean {

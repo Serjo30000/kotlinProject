@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.kotlin9.api.*
 import com.example.kotlin9.databinding.FragmentWeatherBinding
-import com.example.kotlin9.novigation.NavigationSecurity
+import com.example.kotlin9.navigation.NavigationSecurity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import retrofit2.Call

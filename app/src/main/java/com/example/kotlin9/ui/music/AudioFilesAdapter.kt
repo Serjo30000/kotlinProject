@@ -86,7 +86,7 @@ class AudioFilesAdapter : RecyclerView.Adapter<AudioFilesAdapter.AudioFileViewHo
         else{
             currentSongName = storageReference.name
             mediaPlayer?.reset()
-            mediaPlayer?.setDataSource("https://firebasestorage.googleapis.com/v0/b/kotlin9-a1336.appspot.com/o/musics%2F${storageReference.name}?alt=media&token=298cceea-4c6f-45c9-b810-9a420afb4a29")
+            mediaPlayer?.setDataSource("https://firebasestorage.googleapis.com/v0/b/kotlin9-a1336.appspot.com/o/musics%2F${storageReference.name}?alt=media")
             mediaPlayer?.prepare()
             mediaPlayer?.start()
             isPlaying = true

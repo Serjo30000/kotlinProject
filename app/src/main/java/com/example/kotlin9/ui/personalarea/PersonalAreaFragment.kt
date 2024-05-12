@@ -10,14 +10,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
-import com.auth0.jwt.exceptions.TokenExpiredException
-import com.auth0.jwt.interfaces.DecodedJWT
 import com.example.kotlin9.databinding.FragmentPersonalAreaBinding
-import com.example.kotlin9.novigation.NavigationSecurity.Companion.checkNavigation
-import com.example.kotlin9.novigation.NavigationSecurity.Companion.decodedToken
-import java.util.*
+import com.example.kotlin9.navigation.NavigationSecurity.Companion.checkNavigation
+import com.example.kotlin9.navigation.NavigationSecurity.Companion.decodedToken
 
 class PersonalAreaFragment : Fragment() {
 

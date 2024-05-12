@@ -1,9 +1,6 @@
 package com.example.kotlin9.api
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.PUT
+import retrofit2.http.*
 import java.sql.Date
 
 data class UserLibraryDto(val name: String, val surname: String, val login: String, val password: String, val birthday: Date, val avatar: String)
@@ -14,6 +11,8 @@ data class CheckDto(val login: String, val role: String)
 
 data class TokenDto(val token: String)
 
+data class UserLibraryDtoOut(val name: String, val surname: String, val login: String, val role: String, val birthday: Date, val avatar: String)
+
 interface UserService {
     @PUT("/api/userLibraries/save")
     fun saveUserLibraries(@Body aDto: UserLibraryDto): Call<Int>
@@ -23,4 +22,7 @@ interface UserService {
 
     @POST("/api/auth/check")
     fun check(@Body tokenUser: CheckDto): Call<TokenDto>
+
+    @GET("/api/userLibraries/user/{login}")
+    fun getByLoginUserLibrary(@Path("login") login: String): Call<UserLibraryDtoOut>
 }

@@ -91,7 +91,6 @@ class LoginFragment : Fragment(){
                             val editor = sharedPreferences.edit()
                             editor.putString("TOKEN_KEY", statusCode.token)
                             editor.apply()
-                            println(sharedPreferences.getString("TOKEN_KEY", null))
                             callback()
                         }
                         else{

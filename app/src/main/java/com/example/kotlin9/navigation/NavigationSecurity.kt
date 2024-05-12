@@ -1,13 +1,9 @@
-package com.example.kotlin9.novigation
+package com.example.kotlin9.navigation
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import com.auth0.jwt.JWT
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.example.kotlin9.R
-import com.example.kotlin9.api.AuthenticationDto
 import com.example.kotlin9.api.CheckDto
 import com.example.kotlin9.api.TokenDto
 import com.example.kotlin9.api.UserService
