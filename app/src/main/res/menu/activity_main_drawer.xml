@@ -16,13 +16,5 @@
             android:id="@+id/nav_music"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/menu_music" />
-        <item
-            android:id="@+id/nav_login"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_login" />
-        <item
-            android:id="@+id/nav_registration"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_registration" />
     </group>
 </menu>
