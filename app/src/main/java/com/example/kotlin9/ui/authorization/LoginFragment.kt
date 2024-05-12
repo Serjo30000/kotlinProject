@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,7 +59,9 @@ class LoginFragment : Fragment(){
                 return@setOnClickListener
             }
 
-            loginUser(login, password);
+            loginUser(login, password) {
+                findNavController().navigate(R.id.nav_personal_area)
+            }
         }
 
         binding.registrationButton.setOnClickListener{
@@ -65,7 +69,7 @@ class LoginFragment : Fragment(){
         }
     }
 
-    private fun loginUser(login: String, password: String) {
+    private fun loginUser(login: String, password: String, callback: () -> Unit) {
         val retrofit = Retrofit.Builder()
             .baseUrl("http://10.0.2.2:8080")
             .addConverterFactory(GsonConverterFactory.create())
@@ -88,7 +92,7 @@ class LoginFragment : Fragment(){
                             editor.putString("TOKEN_KEY", statusCode.token)
                             editor.apply()
                             println(sharedPreferences.getString("TOKEN_KEY", null))
-                            findNavController().navigate(R.id.nav_personal_area)
+                            callback()
                         }
                         else{
                             clearFields()

@@ -1,5 +1,6 @@
 package com.example.kotlin9
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import com.google.android.material.snackbar.Snackbar
@@ -11,6 +12,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.findNavController
 import com.example.kotlin9.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -40,6 +42,18 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_personal_area, R.id.nav_weather, R.id.nav_music
             ), drawerLayout
         )
+
+//        val sharedPreferences = this.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+//        val token = sharedPreferences.getString("TOKEN_KEY", null)
+//        println(1)
+//        if (token.isNullOrEmpty()) {
+//            val editor = sharedPreferences.edit()
+//            editor.putString("TOKEN_KEY", null)
+//            editor.apply()
+//            println(2)
+//            navController.navigate(R.id.nav_login)
+//        }
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }

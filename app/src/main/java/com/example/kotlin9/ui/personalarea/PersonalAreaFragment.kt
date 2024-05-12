@@ -9,11 +9,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.example.kotlin9.databinding.FragmentPersonalAreaBinding
+import com.example.kotlin9.novigation.NavigationSecurity.Companion.checkNavigation
+import com.example.kotlin9.novigation.NavigationSecurity.Companion.decodedToken
 import java.util.*
 
 class PersonalAreaFragment : Fragment() {
@@ -27,6 +30,14 @@ class PersonalAreaFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+
+        val tokenString = sharedPreferences.getString("TOKEN_KEY", null)?:""
+
+        val login = decodedToken(tokenString)
+
+        checkNavigation(findNavController(),login)
+
         val homeViewModel =
             ViewModelProvider(this).get(PersonalAreaViewModel::class.java)
 
@@ -38,39 +49,7 @@ class PersonalAreaFragment : Fragment() {
             textView.text = it
         }
 
-        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        println(sharedPreferences.getString("TOKEN_KEY", null))
-
-        val tokenString = sharedPreferences.getString("TOKEN_KEY", null)?:""
-
-        val secretKey = "OLUV5b2mFXpasEyjUnijlG7B2wWt+cvkM/LnP7EZuX/OqUYDm9ZVlpSHWco8qk5oJ4FQQa5w0ghtzno5RpyB3A=="
-
-        processToken(tokenString, secretKey)
-
         return root
-    }
-
-    fun processToken(token: String, secret: String) {
-        try {
-            val decodedJWT: DecodedJWT = JWT.require(Algorithm.HMAC256(secret))
-                .build()
-                .verify(token)
-
-            val nbf: Date? = decodedJWT.notBefore
-
-            val currentTime = Date()
-
-            if (nbf != null && currentTime.before(nbf)) {
-                println("Токен еще не действителен")
-            } else {
-                val login = decodedJWT.getClaim("login").asString()
-                println(login)
-            }
-        } catch (e: TokenExpiredException) {
-            println("Токен истек")
-        } catch (e: Exception) {
-            println("Ошибка обработки токена: ${e.message}")
-        }
     }
 
     override fun onDestroyView() {

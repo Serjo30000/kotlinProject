@@ -8,9 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kotlin9.R
 import com.example.kotlin9.databinding.FragmentMusicBinding
+import com.example.kotlin9.novigation.NavigationSecurity
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
@@ -33,6 +36,14 @@ class MusicFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+
+        val tokenString = sharedPreferences.getString("TOKEN_KEY", null)?:""
+
+        val login = NavigationSecurity.decodedToken(tokenString)
+
+        NavigationSecurity.checkNavigation(findNavController(), login)
+
         _binding = FragmentMusicBinding.inflate(inflater, container, false)
         val root: View = binding.root
 

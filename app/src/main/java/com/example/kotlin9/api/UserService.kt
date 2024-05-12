@@ -10,6 +10,8 @@ data class UserLibraryDto(val name: String, val surname: String, val login: Stri
 
 data class AuthenticationDto(val login: String, val password: String)
 
+data class CheckDto(val login: String, val role: String)
+
 data class TokenDto(val token: String)
 
 interface UserService {
@@ -18,4 +20,7 @@ interface UserService {
 
     @POST("/api/auth/login")
     fun logIn(@Body aDto: AuthenticationDto): Call<TokenDto>
+
+    @POST("/api/auth/check")
+    fun check(@Body tokenUser: CheckDto): Call<TokenDto>
 }

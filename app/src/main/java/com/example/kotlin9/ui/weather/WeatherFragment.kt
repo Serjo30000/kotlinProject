@@ -3,6 +3,7 @@ package com.example.kotlin9.ui.weather
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -14,8 +15,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.kotlin9.api.*
 import com.example.kotlin9.databinding.FragmentWeatherBinding
+import com.example.kotlin9.novigation.NavigationSecurity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import retrofit2.Call
@@ -46,8 +49,17 @@ class WeatherFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+
+        val tokenString = sharedPreferences.getString("TOKEN_KEY", null)?:""
+
+        val login = NavigationSecurity.decodedToken(tokenString)
+
+        NavigationSecurity.checkNavigation(findNavController(), login)
+
         _binding = FragmentWeatherBinding.inflate(inflater, container, false)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
         return binding.root
     }
 
