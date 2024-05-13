@@ -1,4 +1,5 @@
 package com.example.kotlin9.api
+import com.google.android.gms.common.internal.safeparcel.SafeParcelable.Param
 import retrofit2.Call
 import retrofit2.http.*
 import java.sql.Date
@@ -25,4 +26,10 @@ interface UserService {
 
     @GET("/api/userLibraries/user/{login}")
     fun getByLoginUserLibrary(@Path("login") login: String): Call<UserLibraryDtoOut>
+
+    @PUT("/api/userLibraries/updatePasswordByToken/{token}")
+    fun updateUserPasswordByToken(@Path("token") token: String, @Query("password") password: String): Call<Int>
+
+    @PUT("/api/userLibraries/updateNotPasswordByToken/{token}")
+    fun updateUSerNotPasswordByToken(@Path("token") token: String, @Body aDto: UserLibraryDto): Call<Int>
 }

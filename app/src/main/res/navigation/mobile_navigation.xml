@@ -31,4 +31,12 @@
         android:name="com.example.kotlin9.ui.registration.RegistrationFragment"
         android:label="@string/menu_registration"
         tools:layout="@layout/fragment_registration" />
+    <fragment
+        android:id="@+id/nav_edit_password_personal_area"
+        android:name="com.example.kotlin9.ui.editpasswordpersonalarea.EditPasswordPersonalAreaFragment"
+        android:label="@string/menu_edit_password_personal_area" />
+    <fragment
+        android:id="@+id/nav_edit_personal_area"
+        android:name="com.example.kotlin9.ui.editpersonalarea.EditPersonalAreaFragment"
+        android:label="@string/menu_edit_personal_area" />
 </navigation>

@@ -49,14 +49,12 @@ class PersonalAreaFragment : Fragment() {
         _binding = FragmentPersonalAreaBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-
         val loginTextViewPersoanlArea : TextView = binding.loginTextViewPersoanlArea
         val birthdayTextViewPersonalArea : TextView = binding.birthdayTextViewPersonalArea
         val surnameTextViewPersonalArea : TextView = binding.surnameTextViewPersonalArea
         val nameTextViewPersonalArea : TextView = binding.nameTextViewPersonalArea
         val logoImageViewPersonalArea : ImageView = binding.logoImageViewPersonalArea
 
-        val currentDate = Date()
         val dateFormat = SimpleDateFormat("yyyy/MM/dd")
 
         val gson = GsonBuilder()
@@ -77,10 +75,10 @@ class PersonalAreaFragment : Fragment() {
                 if (response.isSuccessful) {
                     val statusCode: UserLibraryDtoOut? = response.body()
                     if (statusCode != null){
-                        loginTextViewPersoanlArea.text = statusCode.login
-                        birthdayTextViewPersonalArea.text = dateFormat.format(statusCode.birthday)
-                        surnameTextViewPersonalArea.text = statusCode.surname
-                        nameTextViewPersonalArea.text = statusCode.name
+                        loginTextViewPersoanlArea.text = "Логин: " + statusCode.login
+                        birthdayTextViewPersonalArea.text = "День рождения: " + dateFormat.format(statusCode.birthday)
+                        surnameTextViewPersonalArea.text = "Фамилия: " + statusCode.surname
+                        nameTextViewPersonalArea.text = "Имя: " + statusCode.name
                         val imageDayFifthWeatherURL = "https://firebasestorage.googleapis.com/v0/b/kotlin9-a1336.appspot.com/o/avatars%2F" + statusCode.avatar + "?alt=media"
                         Picasso.get().load(imageDayFifthWeatherURL).into(logoImageViewPersonalArea)
                     }
@@ -103,11 +101,11 @@ class PersonalAreaFragment : Fragment() {
         val editor = sharedPreferences.edit()
 
         binding.buttonEditPersonalArea.setOnClickListener {
-
+            findNavController().navigate(R.id.nav_edit_personal_area)
         }
 
         binding.buttonEditPasswordPersonalArea.setOnClickListener {
-
+            findNavController().navigate(R.id.nav_edit_password_personal_area)
         }
 
         binding.buttonLogOutPersonalArea.setOnClickListener{

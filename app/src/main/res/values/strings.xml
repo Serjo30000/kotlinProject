@@ -12,4 +12,6 @@
     <string name="menu_music">Music</string>
     <string name="menu_login">Login</string>
     <string name="menu_registration">Registration</string>
+    <string name="menu_edit_personal_area">Edit Personal Area</string>
+    <string name="menu_edit_password_personal_area">Edit Password Personal Area</string>
 </resources>
