@@ -91,7 +91,6 @@ class RegistrationFragment : Fragment(){
             registerUser(name, surname, login, password, birthday) {avatar->
                 println(avatar)
                 if (selectedImage != null) {
-                    println(1)
                     uploadImageToFirebaseStorage(selectedImage!!,avatar)
                 }
                 clearFields()

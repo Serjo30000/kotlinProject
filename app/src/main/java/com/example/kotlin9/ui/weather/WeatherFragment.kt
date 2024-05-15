@@ -172,8 +172,6 @@ class WeatherFragment : Fragment() {
                         val localPlaceCityWeather: TextView = binding.localPlaceCityWeather
                         localPlaceCityWeather.text = weatherResponse.city.name
 
-//                        println("hello " + weatherResponse.city.timezone)
-
                         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
                         val lstWeatherForecast = ArrayList<WeatherForecast>()
