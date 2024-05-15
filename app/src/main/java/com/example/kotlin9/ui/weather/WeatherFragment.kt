@@ -208,6 +208,11 @@ class WeatherFragment : Fragment() {
                                 countDay++
                             }
 
+
+                            if (countHour==8 && lstTemperaturesAverage.size == 0){
+                                lstTemperaturesAverage.add(273.15)
+                            }
+
                             if (i<8){
                                 lstDaysHours.add(formatterDateTime.format(formatter))
                             }
